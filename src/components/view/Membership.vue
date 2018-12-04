@@ -111,6 +111,35 @@
         <div id="topBuyEcharts"></div>
       </div>
     </div>
+    <!-- 消费小票 -->
+    <div class="xiaopiao_card">
+      <div class="analyze_table_header">
+        <h2>购买清单</h2>
+      </div>
+      <div class="xiaopiao">
+        <div class="xiaopiao_top">
+          <span>店号: 10113</span>
+          <span>机号: 3480</span>
+          <span>收银员: 1799</span>
+          <span>日期: 2018-05-29</span>
+          <span>流水号: 394823847595</span>
+        </div>
+        <div class="receipt_table">
+          <div class="receipt_table_header">
+            <span>商品名</span>
+            <span>单价</span>
+          </div>
+          <div class="receipt_table_body">
+            <span>克丽丝汀迪奥凝脂恒久气垫粉底010 （限量版）SPF40PA++</span>
+            <span>¥ 5998</span>
+          </div>
+        </div>
+        <div class="receipt_total">
+          <p>订单金额: ¥ 100000000</p>
+          <p>实际支付: ¥ 500000000</p>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -402,10 +431,83 @@ h1,h2,h3,h4 {
 }
 .topBuyEcharts {
   width: 100%;
-  height: 300px;
+  height: 270px;
 }
 #topBuyEcharts {
   width: 100%;
   height: 100%;
+}
+.xiaopiao_card {
+  width: 100%;
+  background-color: #fff;
+}
+.xiaopiao {
+  width: 100%;
+  background-color: #fff;
+  box-shadow: 0.05rem 0.05rem 0.25rem rgba(0, 0, 0, 0.1);
+  margin-bottom: 5px;
+  padding: 5px auto;
+  font-size: 15px;
+}
+.xiaopiao_top {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.xiaopiao_top span {
+  display: inline-table;
+  margin: 10px 15px;
+  /* font-size: 16px; */
+}
+.receipt_table {
+  width: 100%;
+  /* margin: 0 auto; */
+  text-align: center;
+}
+.receipt_table_header {
+  width: 100%;
+}
+.receipt_table_header span{
+  display: inline-table;
+  height: 30px;
+  line-height: 30px;
+  background-color: #d9e3fb;
+}
+.receipt_table_header span:nth-child(1){
+  width: 75%;
+}
+.receipt_table_header span:nth-child(2){
+  width: 20%;
+}
+.receipt_table_body span{
+  height: 40px;
+  line-height: 40px;
+  background-color: #f5f5f5;
+}
+.receipt_table_body span:nth-child(1){
+  width: 74%;
+  display: inline-block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  padding: 0 0.5%;
+}
+.receipt_table_body span:nth-child(2){
+  width: 20%;
+  display: inline-block;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.receipt_total {
+  width: 100%;
+  background-color: #fff;
+  padding: 10px 0;
+  text-align: right;
+}
+.receipt_total p {
+  margin-right: 15px;
 }
 </style>
