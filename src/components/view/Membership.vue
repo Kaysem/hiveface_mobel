@@ -9,7 +9,7 @@
         </div>
         <div class="perInfo_top_right">
           <p>{{vipInfo.memName}} ( {{vipInfo.memPhone}} )</p>
-          <p><span>年龄: {{vipInfo.age}}岁</span><span>生日: {{vipInfo.birthday}}(距今{{vipInfo.age}}天)</span></p>
+          <p><span>年龄: {{vipInfo.age}}岁</span><span>生日: {{vipInfo.birthday}}(还有{{vipInfo.birthDayDiff}}天)</span></p>
           <p>上一次到店: {{vipInfo.last_visit_date}}(距今{{vipInfo.last_visit_date_diff}}天)</p>
         </div>
       </div>
@@ -26,35 +26,37 @@
       </div>
     </div>
     <div class="card">
+      <div v-if="isrecommendShow0">
+        <div class="perInfo_recommend_header" v-if="isrecommendShow" @click="SwitcSsection()">
+          <h2>推荐商品</h2>
+          <div class="perInfo_recommend_header_right">
+            <span>1</span>
+            <span>/</span>
+            <span>2</span>
+            <span><img src="../../assets/img/refresh.png" alt=""></span>
+          </div>
+        </div>
+        <div class="perInfo_recommend_header" v-else @click="SwitcSsection()">
+          <h2>推荐商品</h2>
+          <div class="perInfo_recommend_header_right">
+            <span>2</span>
+            <span>/</span>
+            <span>1</span>
+            <span><img src="../../assets/img/refresh.png" alt=""></span>
+          </div>
+        </div>
+      </div>
+      <div class="perInfo_recommend_header" v-if="!isrecommendShow0">
+        <h2>推荐商品</h2>
+        <div class="perInfo_recommend_header_right">
+          <span>1</span>
+          <span>/</span>
+          <span>0</span>
+        </div>
+      </div>
       <div class="perInfo_recommend" v-for="(item_fenye, recommendProducIndex) in recommendProduct.rec_product" :key="recommendProducIndex">
-        <div class="perInfo_recommend_header" v-if="recommendProduct.rec_product.length>0 && recommendProducIndex==0" @click="SwitcSsection(recommendProducIndex)">
-          <h2>推荐商品</h2>
-          <div class="perInfo_recommend_header_right">
-            <span>1</span>
-            <span>/</span>
-            <span>2</span>
-            <span><img src="../../assets/img/refresh.png" alt=""></span>
-          </div>
-        </div>
-        <div class="perInfo_recommend_header" v-else-if="recommendProduct.rec_product.length>0 && recommendProducIndex == 2" @click="SwitcSsection(recommendProducIndex)">
-          <h2>推荐商品</h2>
-          <div class="perInfo_recommend_header_right">
-            <span>2</span>
-            <span>/</span>
-            <span>1</span>
-            <span><img src="../../assets/img/refresh.png" alt=""></span>
-          </div>
-        </div>
-        <div class="perInfo_recommend_header" v-else-if="recommendProduct.rec_product.length==1 && recommendProducIndex==0">
-          <h2>推荐商品</h2>
-          <div class="perInfo_recommend_header_right">
-            <span>1</span>
-            <span>/</span>
-            <span>0</span>
-          </div>
-        </div>
-        <ul class="recommend1">
-          <li v-for="(item, index) in item_fenye" :key="index" v-if="recommendProducIndex ==0" v-show="isrecommendShow">
+        <ul class="recommend1" v-if="isShopTuijian">
+          <li v-for="(item, index) in item_fenye" :key="index" v-if="recommendProducIndex ===0 && isrecommendShow">
             <span v-if="index == 0"><img src="..\..\assets\img\top1.png" alt=""></span>
             <span v-if="index == 1"><img src="..\..\assets\img\top2.png" alt=""></span>
             <span v-if="index == 2"><img src="..\..\assets\img\top3.png" alt=""></span>
@@ -62,48 +64,48 @@
             <span class="line_limit_length">{{item.name}}</span>
             <span>¥ {{item.price}}</span>
           </li>
-          <li v-for="(item, index) in item_fenye" :key="index" v-if="recommendProducIndex ==1" v-show="!isrecommendShow">
+          <li v-for="(item, index) in item_fenye" :key="index" v-if="recommendProducIndex ===1 &&!isrecommendShow">
             <span>{{index +6}}</span>
             <span class="line_limit_length">{{item.name}}</span>
             <span>¥ {{item.price}}</span>
           </li>
         </ul>
-        <!-- <div class="recommend0">暂无数据</div> -->
+        <div class="recommend1" v-if="!isShopTuijian">暂无更多推荐商品</div>
       </div>
     </div>
     <div class="card">
-      <div class="analyze_table">
+      <div class="analyze_table" :data="saleLevelDetail">
         <div class="analyze_table_header">
           <h2>消费水平</h2>
         </div>
         <div>
           <span>
             <p>总消费</p>
-            <p>5562.26</p>
+            <p>¥ {{saleLevelDetail.pay_sum}}</p>
           </span>
           <span>
             <p>平均消费</p>
-            <p>556</p>
+            <p>¥ {{saleLevelDetail.pay_sum_per}}</p>
           </span>
         </div>
         <div>
           <span>
             <p>平均购买件数</p>
-            <p>4件</p>
+            <p>{{saleLevelDetail.skumun_cnt_per}}件</p>
           </span>
           <span>
             <p>购买率</p>
-            <p>56%</p>
+            <p>{{saleLevelDetail.purchase_rate}}</p>
           </span>
         </div>
         <div>
           <span>
             <p>上次购买最贵商品</p>
-            <p>1938</p>
+            <p>{{saleLevelDetail.last_expensive_item}}</p>
           </span>
           <span>
             <p>历史购买最贵商品</p>
-            <p>2938</p>
+            <p>{{saleLevelDetail.expensive_item}}</p>
           </span>
         </div>
       </div>
@@ -111,7 +113,7 @@
     <!-- 最常购买Echarts -->
     <div class="card">
       <div class="analyze_table_header">
-          <h2>最常购买(TOP5)</h2>
+          <h2>最常购买商品(TOP5)</h2>
       </div>
       <div class="topBuyEcharts">
         <div id="topBuyEcharts"></div>
@@ -122,27 +124,27 @@
       <div class="analyze_table_header">
         <h2>购买清单</h2>
       </div>
-      <div class="xiaopiao">
+      <div class="xiaopiao" v-for="(itemSaleOrderDetail, indexSaleOrderDetail) in saleOrderDetail" :key="indexSaleOrderDetail">
         <div class="xiaopiao_top">
-          <span>店号: 10113</span>
-          <span>机号: 3480</span>
-          <span>收银员: 1799</span>
-          <span>日期: 2018-05-29</span>
-          <span>流水号: 394823847595</span>
+          <span>店号: {{itemSaleOrderDetail.orderStore}}</span>
+          <span>机号: {{itemSaleOrderDetail.posCode}}</span>
+          <span>收银员: {{itemSaleOrderDetail.cashier}}</span>
+          <span>日期: {{itemSaleOrderDetail.detailDate}}</span>
+          <span>流水号: {{itemSaleOrderDetail.orderNo}}</span>
         </div>
         <div class="receipt_table">
           <div class="receipt_table_header">
             <span>商品名</span>
             <span>单价</span>
           </div>
-          <div class="receipt_table_body">
-            <span>克丽丝汀迪奥凝脂恒久气垫粉底010 （限量版）SPF40PA++</span>
-            <span>¥ 5998</span>
+          <div class="receipt_table_body" v-for="(item, index) in itemSaleOrderDetail.productList" :key="index">
+            <span>{{item.skuName}}</span>
+            <span>¥ {{item.realPrice}}</span>
           </div>
         </div>
         <div class="receipt_total">
-          <p>订单金额: ¥ 100000000</p>
-          <p>实际支付: ¥ 500000000</p>
+          <p>订单金额: ¥ {{itemSaleOrderDetail.orderAmount}}</p>
+          <p>实际支付: ¥ {{itemSaleOrderDetail.realPayAmount}}</p>
         </div>
       </div>
     </div>
@@ -156,14 +158,18 @@ export default {
   props: {},
   data () {
     return {
+      realmemNo: {}, // 保存会员iD
       index: '',
       recommendProduct: {}, // 推荐商品
       vipInfo: {}, // vip个人信息
       RFMAnalyze: {}, // RFM评价
-      userBuyThings: {}, // 消费水平
+      saleLevelDetail: {}, // 消费水平
       // recProducIndex : 0, // 推荐商品显示index
       // 常购买商品echarts
+      isrecommendShow0: true, // 根据有一页或者多页判断显示的商品推荐右上角
       isrecommendShow: true,
+      isShopTuijian: true,
+      saleOrderDetail: {}, // 小票信息
       topBuyEcharts: {
         tooltip: {
           trigger: 'axis',
@@ -200,7 +206,7 @@ export default {
             show: false
           },
           axisLabel: {
-            show: true,
+            show: false,
             textStyle: {
               color: '#707070'
             }
@@ -244,6 +250,10 @@ export default {
     };
   },
   created () {},
+  beforeMount () {
+    let _this = this;
+    _this.realmemNo = _this.$route.params.realmemNo;
+  },
   mounted () {
     let _this = this;
     _this.drawEcharts();
@@ -263,25 +273,22 @@ export default {
     // 发送请求 查询会员信息
     vipInfoSearch () {
       let _this = this;
-      let realmemNo = _this.$route.params.realmemNo;
       let json = {
-        vipID: realmemNo
+        vipID: _this.realmemNo
         // start_time: '2018-05-15',
         // end_time: '2018-12-05'
       };
-      console.log(realmemNo);
       let formdata = _this.$config.formData(json);
       _this.$axios
         .post(_this.$url.portrait, formdata)
         .then(res => {
           if (res.status === 200) {
-            console.log(res);
             let data = res.data.data;
             // 先清空再赋值 start
             _this.recommendProduct = {};
             _this.vipInfo = {};
             _this.RFMAnalyze = {};
-            _this.userBuyThings = {};
+            _this.saleLevelDetail = {};
             if (data.recommendProduct.rec_product.length !== 0 && data.recommendProduct.rec_product[0].length !== 0) {
               _this.recommendProduct = data.recommendProduct;
               _this.is_recommendProduct = false;
@@ -290,7 +297,7 @@ export default {
             }
             _this.vipInfo = data.vipInfo;
             _this.RFMAnalyze = data.RFMAnalyze;
-            _this.userBuyThings = data.userBuyThings;
+            _this.saleLevelDetail = data.saleLevelDetail;
 
             // 常购买商品echarts
             _this.topBuyEcharts.xAxis.data = [];
@@ -298,12 +305,12 @@ export default {
             for (let i = 0; i < data.usedBuyProduct.length; i++) {
               let favItemName = data.usedBuyProduct[i].fav_itemName;
               let cnt = data.usedBuyProduct[i].cnt;
-              _this.topBuyEcharts.yAxis.data.push(favItemName);
-              _this.topBuyEcharts.series.data.push(cnt);
+              _this.topBuyEcharts.yAxis.data.unshift(favItemName);
+              _this.topBuyEcharts.series.data.unshift(cnt);
             }
             _this.$nextTick(() => {
               _this.drawEcharts();
-              // _this.mousedown();
+              _this.mousedown();
             });
           }
         }).catch(err => {
@@ -316,49 +323,39 @@ export default {
     // 点击右上角图标 切换商品推荐页
     SwitcSsection (recommendProducIndex) {
       let _this = this;
-      console.log(recommendProducIndex);
-      _this.isrecommendShow = false;
-    }
+      if (_this.recommendProduct.rec_product.length !== 0 || _this.recommendProduct.rec_product[0].length !== 0) {
+        _this.isrecommendShow = !_this.isrecommendShow;
+        if (_this.recommendProduct.rec_product.length === 1) {
+          _this.isrecommendShow0 = !_this.isrecommendShow0;
+        }
+      } else {
+        _this.isShopTuijian = !_this.isShopTuijian;
+      }
+    },
 
     // 点击顾客消费echarts查询当天小票
-    // mousedown () {
-    //   let _this = this;
-    //   //  清空缓存数据
-    //   // _this.saleOrderDetail = {};
-    //   console.log(_this.chart_power.xAxis.data[_this.chart_power.xAxis.data.length - 1]);
-    //   if (_this.chart_power.xAxis.data == []) {
-    //     _this.is_saleOrderDetail = true;
-    //   } else if (XdataName == '' && _this.chart_power.xAxis.data.length != 0) {
-    //     _this.is_saleOrderDetail = false;
-    //     XdataName = _this.chart_power.xAxis.data[_this.chart_power.xAxis.data.length - 1];
-    //   } else if (XdataName != '' && _this.chart_power.xAxis.data.length != 0) {
-    //     _this.is_saleOrderDetail = false;
-    //   } else {
-    //     _this.is_saleOrderDetail = true;
-    //   }
-    //   console.log('索引', XdataName);
-    //   let json = {
-    //     vipID: _this.USinput,
-    //     orderDate: XdataName
-    //   };
-    //   let formdata = _this.$config.formData(json);
-    //   // 发送请求  S
-    //   _this.$axios
-    //     .post(_this.$url.orderDetail, formdata)
-    //     .then(res => {
-    //       console.log('852', res);
-    //       if (res.status === 200) {
-    //         console.log(res);
-    //         let data = res.data.data;
-    //         _this.saleOrderDetail = {};
-    //         _this.saleOrderDetail = data.saleOrderDetail;
-    //       }
-    //       XdataName = '';
-    //     }).catch(err => {
-    //       console.log('异常:', err);
-    //       _this.is_saleOrderDetail = true;
-    //     });
-    // }
+    mousedown () {
+      let _this = this;
+      //  清空缓存数据
+      _this.saleOrderDetail = {};
+      let json = {
+        vipID: _this.realmemNo
+      };
+      let formdata = _this.$config.formData(json);
+      // 发送请求  S
+      _this.$axios
+        .post(_this.$url.orderDetail, formdata)
+        .then(res => {
+          if (res.status === 200) {
+            let data = res.data.data;
+            _this.saleOrderDetail = {};
+            _this.saleOrderDetail = data.saleOrderDetail;
+          }
+        }).catch(err => {
+          console.log('异常:', err);
+          _this.is_saleOrderDetail = true;
+        });
+    }
   }
 };
 </script>
@@ -389,17 +386,17 @@ h1,h2,h3,h4 {
   padding: 0;
 }
 .memListHeadcss{
-  width: 15%;
+  width: 17%;
   float: left;
   height: 100%;
-  margin: 10px 10px;
+  margin: 10px 10px 0 5px;
 }
 .memListHead {
-  width: 100%;
+  width: 60px;
+  height: 60px;
   border-radius: 50%;
   position: relative;
   top: 50%; /*偏移*/
-  /* margin-top: -50%; */
 }
 .perInfo_top_right {
   font-size: 14px;
@@ -420,6 +417,7 @@ h1,h2,h3,h4 {
   color: #444444;
   opacity: 0.9;
   font-weight: 700;
+  font-size: 12px;
 }
 .perInfo_top_right>p:nth-child(2)>span:nth-child(2) {
   margin-left: 25px;
@@ -451,15 +449,13 @@ h1,h2,h3,h4 {
   font-size: 14px;
   text-align: center;
 }
-.perInfo_recommend {
-  padding: 5px 15px;
-}
 .recommend1 img {
   width: 20px;
   float: left;
 }
 .recommend1 li {
   line-height: 30px;
+  padding: 5px 15px;
 }
 .recommend1 li>span:nth-child(1) {
   float: left;
@@ -474,15 +470,18 @@ h1,h2,h3,h4 {
 .recommend1 li>span:nth-child(3) {
   float: right;
 }
-.recommend1 li:nth-child(3)>span:nth-child(1),.recommend1 li:nth-child(4)>span:nth-child(1),.recommend1 li:nth-child(5)>span:nth-child(1){
+.recommend1 li>span:nth-child(1){
   width: 22px;
   font-size: 18px;
   text-align: center;
+  display: inline-block;
+  margin: 0 auto;
   color: #999999;
 }
 .perInfo_recommend_header {
   height: 40px;
   line-height: 40px;
+  margin: 10px 15px 0 15px;
 }
 .perInfo_recommend_header_right {
   float: right;
@@ -510,10 +509,6 @@ h1,h2,h3,h4 {
   line-height: 40px;
   padding-left: 15px;
 }
-/* .analyze_table th {
-  float: left;
-  font-size: 18px;
-} */
 .analyze_table div {
   text-align: left;
   border-bottom: 1px solid #dcdcdc;
@@ -522,7 +517,6 @@ h1,h2,h3,h4 {
   border: none;
 }
 .analyze_table span {
-  /* text-align: center; */
   width: 43%;
   height: 70px;
   padding-left:20px;
@@ -574,11 +568,9 @@ h1,h2,h3,h4 {
 .xiaopiao_top span {
   display: inline-table;
   margin: 10px 15px;
-  /* font-size: 16px; */
 }
 .receipt_table {
   width: 100%;
-  /* margin: 0 auto; */
   text-align: center;
 }
 .receipt_table_header {

@@ -2,7 +2,11 @@
 <template>
   <div id="MemberStore">
     <div class="memList">
-      <ul>
+      <div class="Isdata" v-if="isData">
+        <p>正在期待顾客进店^~^</p>
+        <button @click="ToStoreRecords()" v-text="buttonShuaxin"></button>
+      </div>
+      <ul v-else>
         <li @click="Membership(ToStoreList_item['sub'][0]['realmemNo'])" v-for="(ToStoreList_item,index) in ToStoreList" :key="index">
           <div class="memListOne" v-if="ToStoreList_item['sub'][0]['memType'] == 'VIP顾客'">
             <div class="memListHeadcss">
@@ -50,20 +54,44 @@
 </template>
 
 <script>
-
+// let timeIndex = 0;
+// document.addEventListener('webkitvisibilitychange', function () {
+//   if (document.webkitVisibilityState === 'hidden') {
+//     timeIndex = timeIndex + 1;
+//   } else {
+//     // 再这里再调用一遍获取列表的方法
+//   }
+// });
 export default {
   name: 'MemberStore',
   components: {},
   props: {},
   data () {
     return {
-      ToStoreList: []
+      ToStoreList: [],
+      isData: true,
+      buttonShuaxin: '点击刷新',
+      interval: {}
     };
   },
   created () {},
   mounted () {
     let _this = this;
     _this.ToStoreRecords();
+    // clearInterval(_this.interval);
+    // _this.interval = setInterval(function () {
+    //   _this.ToStoreRecords();
+    //   clearInterval(_this.interval);
+    // }, 10000);
+  },
+  updated () {
+    // let _this = this;
+    // clearInterval(_this.interval);
+  },
+  beforeDestroy () {
+    let _this = this;
+    // clearTimeout(_this.interval);
+    clearInterval(_this.interval);
   },
   watch: {},
   computed: {},
@@ -96,26 +124,36 @@ export default {
     },
     Membership (realmemNo) {
       let _this = this;
-      console.log(realmemNo);
       if (realmemNo !== '' && realmemNo !== null && realmemNo !== undefined) {
         _this.$router.push({name: 'Membership', params: {realmemNo: realmemNo}});
       }
     },
     ToStoreRecords () {
       let _this = this;
+      let timestamp = _this.getMyDate(new Date().getTime()); // 当前时间
       let json = {
         num: 'D001',
-        date: '2018-12-05'
+        date: timestamp
       };
       let formdata = _this.$config.formData(json);
       // 发送请求  S
+      _this.buttonShuaxin = '拼命加载中...';
       _this.$axios
         .post(_this.$url.p_mem_realtime_buy, formdata)
         .then(res => {
           if (res.status === 200) {
+            // clearInterval(_this.interval);
+            _this.buttonShuaxin = '刷新一下';
             let data = res.data;
-            console.log(res);
-            _this.ToStoreList = data;
+            for (let i = 0; i < data.length; i++) {
+              if (data[i].sub.length !== 0) {
+                _this.ToStoreList = data;
+                _this.isData = false;
+              } else {
+                _this.isData = true;
+              }
+            }
+
             // for(let i=0;i<data.length;i++){
             //   if (data[i].sub[0].memType === 'VIP顾客') {
             //     _this.memListCss = "memListOne";
@@ -132,6 +170,16 @@ export default {
           console.log('异常:', err);
         });
       // 发送请求 E
+
+      // _this.interval = setTimeout(function () {
+      //   clearTimeout(_this.interval);
+      //   _this.ToStoreRecords();
+      // }, 10000);
+
+      clearInterval(_this.interval);
+      _this.interval = setInterval(() => {
+        _this.ToStoreRecords();
+      }, 10000);
     }
   }
 };
@@ -144,11 +192,13 @@ export default {
   background-color: #f5f5f5;
   color: #000;
 }
-ul,li{
+ul,li,button{
   padding:0;
   margin:0;
   list-style:none;
-  box-shadow: 0.1rem 0.1rem 0.5rem rgba(0, 0, 0, 0.04)
+  box-shadow: 0.1rem 0.1rem 0.5rem rgba(0, 0, 0, 0.04);
+  /* border: none; */
+  outline: none;
 }
 li {
   width: 100%;
@@ -156,6 +206,30 @@ li {
 }
 .memList {
   padding: 0 15px;
+}
+.Isdata {
+  width: 95%;
+  height: 100px;
+  color: #FFA500;
+  font-size: 18px;
+  font-weight: 700;
+  text-align: center;
+  margin: 0 auto;
+  background-color: #fff;
+  padding: 20px 0;
+  border-radius: 30px;
+  position:fixed;
+  left:2.5%;
+  top:30%;
+  box-shadow: 0 3px 30px rgba(192,192,192,0.5)
+}
+.Isdata button {
+  width: 40%;
+  height: 40px;
+  border-radius: 30px;
+  background-color: #409eff;
+  color: #fff;
+  font-size: 14px;
 }
 .memListHeadcss{
   /* width: 20%; */
