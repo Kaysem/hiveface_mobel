@@ -10,7 +10,7 @@
         <div class="perInfo_top_right">
           <p>{{vipInfo.memName}} ( {{vipInfo.memPhone}} )</p>
           <p><span>年龄: {{vipInfo.age}}岁</span><span>生日: {{vipInfo.birthday}}(还有{{vipInfo.birthDayDiff}}天)</span></p>
-          <p>上一次到店: {{vipInfo.last_visit_date}}(距今{{vipInfo.last_visit_date_diff}}天)</p>
+          <p>最近到店: {{vipInfo.last_visit_date}}(距今{{vipInfo.last_visit_date_diff}}天)</p>
         </div>
       </div>
       <!-- 评价 -->
@@ -18,6 +18,11 @@
         <div>
           <div  id="memAppraise_img">
             <h3>RFM评分 : {{RFMAnalyze.rfm}}</h3>
+            <div class="beizhu">
+              <!-- v-if="iconBeizhu" -->
+              <p v-if="iconBeizhu" class="beizhu_info">备注:强＞一般＞弱</p>
+              <img src="../../assets/img/beizhu.png" alt="" class="icon_beizhu" @click="isTuijianIcon()">
+            </div>
             <p>{{RFMAnalyze.one}}</p>
             <p>{{RFMAnalyze.two}}</p>
             <p>{{RFMAnalyze.three}}</p>
@@ -101,11 +106,11 @@
         <div>
           <span>
             <p>上次购买最贵商品</p>
-            <p>{{saleLevelDetail.last_expensive_item}}</p>
+            <p>¥ {{saleLevelDetail.last_expensive_item}}</p>
           </span>
           <span>
             <p>历史购买最贵商品</p>
-            <p>{{saleLevelDetail.expensive_item}}</p>
+            <p>¥ {{saleLevelDetail.expensive_item}}</p>
           </span>
         </div>
       </div>
@@ -170,6 +175,7 @@ export default {
       isrecommendShow: true,
       isShopTuijian: true,
       saleOrderDetail: {}, // 小票信息
+      iconBeizhu: false, // 提示信息
       topBuyEcharts: {
         tooltip: {
           trigger: 'axis',
@@ -184,6 +190,9 @@ export default {
           containLabel: true
         },
         xAxis: {
+          name: '单位:(件)',
+          nameLocation: 'center',
+          nameGap: '25',
           type: 'value',
           boundaryGap: [0, 0.01],
           axisLabel: { // 坐标轴字体样式
@@ -355,6 +364,16 @@ export default {
           console.log('异常:', err);
           _this.is_saleOrderDetail = true;
         });
+    },
+    isTuijianIcon () {
+      let _this = this;
+      _this.iconBeizhu = !_this.iconBeizhu;
+      if (_this.iconBeizhu) {
+        let timer = setTimeout(function () {
+          _this.iconBeizhu = false;
+          clearTimeout(timer);
+        }, 2000);
+      }
     }
   }
 };
@@ -439,11 +458,32 @@ h1,h2,h3,h4 {
   background-size:100% 90%;
   color: #fff;
 }
+.beizhu_info {
+  width: 150px;
+  height: 40px;
+  text-align: center;
+  line-height: 40px;
+  background-color: #000;
+  opacity: 0.7;
+  color: #fff;
+  border-radius: 30px;
+  position: absolute;
+  top: 20px;
+  left: -28px;
+}
 #memAppraise_img {
   margin: 4% 2% 2% 6%;
   text-align: left;
 }
-
+#memAppraise_img .beizhu {
+  display: inline-block;
+  margin-left: 5px;
+  height: 14px;
+  position: relative;
+}
+#memAppraise_img h3 {
+  display: inline-block;
+}
 .recommend1 {
   margin: 10px auto;
   font-size: 14px;
@@ -540,7 +580,7 @@ h1,h2,h3,h4 {
 }
 .topBuyEcharts {
   width: 100%;
-  height: 270px;
+  height: 280px;
 }
 #topBuyEcharts {
   width: 100%;

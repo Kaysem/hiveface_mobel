@@ -54,14 +54,13 @@
 </template>
 
 <script>
-// let timeIndex = 0;
-// document.addEventListener('webkitvisibilitychange', function () {
-//   if (document.webkitVisibilityState === 'hidden') {
-//     timeIndex = timeIndex + 1;
-//   } else {
-//     // 再这里再调用一遍获取列表的方法
-//   }
-// });
+// function getQueryString (name) {
+//   var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+//   var r = window.location.href.substr(1).match(reg);
+//   if (r != null) return unescape(r[2]);
+//   return null;
+// }
+// let storecode = getQueryString('storecode');
 export default {
   name: 'MemberStore',
   components: {},
@@ -71,18 +70,19 @@ export default {
       ToStoreList: [],
       isData: true,
       buttonShuaxin: '点击刷新',
-      interval: {}
+      interval: {},
+      storecode: '' // 店铺ID
     };
   },
   created () {},
+  beforeMount () {
+    let _this = this;
+    _this.getQueryString('storecode');
+  },
   mounted () {
     let _this = this;
     _this.ToStoreRecords();
-    // clearInterval(_this.interval);
-    // _this.interval = setInterval(function () {
-    //   _this.ToStoreRecords();
-    //   clearInterval(_this.interval);
-    // }, 10000);
+    console.log(_this.storecode);
   },
   updated () {
     // let _this = this;
@@ -96,6 +96,20 @@ export default {
   watch: {},
   computed: {},
   methods: {
+    getQueryString (name) {
+      let _this = this;
+      // var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+      // var r = window.location.href.substr(0).match(reg);
+      // console.log(r);
+      // if (r != null) {
+      //   _this.storecode = unescape(r[2]);
+      // }
+      var r = window.location.href.substr(0);
+      console.log(r);
+      let canshu = r.split('?');
+      _this.storecode = canshu[1].split('=')[1];
+      console.log('999', _this.storecode);
+    },
     getMyDate (str) {
       let _this = this;
       let oDate = new Date(str);
@@ -132,7 +146,7 @@ export default {
       let _this = this;
       let timestamp = _this.getMyDate(new Date().getTime()); // 当前时间
       let json = {
-        num: 'D001',
+        num: _this.storecode,
         date: timestamp
       };
       let formdata = _this.$config.formData(json);

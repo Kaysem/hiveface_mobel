@@ -1,5 +1,5 @@
 
-const baseUrl1 = 'http://screenServer.umessage.com.cn/api/bigs'; //线上
+const baseUrl1 = 'http://jinwang4.umessage.com.cn/api/bigs'; //线上
 const baseUrl2 =  'http://face.umessage.com.cn/api';
 export default {
   "p_mem_realtime_buy": baseUrl1+"/p_mem_realtime_buy" , //到店记录
