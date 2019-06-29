@@ -20,7 +20,7 @@
             <h3>RFM评分 : {{RFMAnalyze.rfm}}</h3>
             <div class="beizhu">
               <!-- v-if="iconBeizhu" -->
-              <p v-if="iconBeizhu" class="beizhu_info">备注PS:强＞一般＞弱</p>
+              <p v-if="iconBeizhu" class="beizhu_info">备注:强＞一般＞弱水电费</p>
               <img src="../../assets/img/beizhu.png" alt="" class="icon_beizhu" @click="isTuijianIcon()">
             </div>
             <p>{{RFMAnalyze.one}}</p>
